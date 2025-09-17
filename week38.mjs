@@ -166,3 +166,39 @@ function isLeapYear(year) {
   }
   return leapYear;
 }
+
+//Task 13
+
+function sameWord(wordA, wordB) {
+  let isEqual = false;
+  if (wordA === wordB) {
+    isEqual = true;
+  }
+  return isEqual;
+}
+
+//Task 14
+
+function isWeekend(day) {
+  let isWeekday = true;
+  if (day == "Saturday" || day == "Sunday") {
+    isWeekday = false;
+  }
+  return !isWeekday;
+}
+
+//Task 15
+
+function evaluateTriangleType(a, b, c) {
+  let triangleType = "";
+  if (a == b && b == c) {
+    triangleType = "Equilateral";
+  } else if (a == b || a == c || b == c) {
+    triangleType = "Isosceles";
+  } else if (a != b && a != c && b != c) {
+    triangleType = "Scalene";
+  } else {
+    triangleType = "Error";
+  }
+  return triangleType;
+}
