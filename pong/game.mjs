@@ -6,6 +6,9 @@ const scene = document.getElementById("scene");
 const brush = getBrush();
 let interval;
 
+let playerScore = 0;
+let AIScore = 0;
+
 const BORDER = {
   LEFT: 0,
   TOP: 0,
@@ -52,6 +55,8 @@ const middleLine = {
 
 function init() {
   // Do any initialization that is needed before the game starts.
+  playerScore = 0;
+  AIScore = 0;
   interval = setInterval(update, FPS);
 }
 
@@ -59,7 +64,7 @@ function update() {
   // Update to game logic.
   moveBall(ball);
   keepBallOnPitch(ball);
-  bounceBall(ball);
+  bounceOnPaddle(ball);
   draw();
 }
 
@@ -93,13 +98,14 @@ function moveBall(ball) {
   ball.y = ball.y + ball.yVelocity;
 }
 
-function bounceBall(ball) {
+function bounceOnPaddle(ball) {
   if (
     isInBounds(
       ball.x,
       paddle.x + paddle.width,
       paddle.x + paddle.width + ball.radius
-    )
+    ) &&
+    isInBounds(ball.y, paddle.y - ball.radius, paddle.y + paddle.height)
   ) {
     ball.xVelocity = ball.xVelocity * -1;
   }
