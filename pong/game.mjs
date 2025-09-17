@@ -20,11 +20,11 @@ const ball = {
   color: "#f97f04d4",
   radius: 10,
   x: 310,
-  //xVelocity: (Math.round(Math.random() * 4) + 2) * Math.random() > 0.5 ? 1 : -1,
-  xVelocity: 5,
+  xVelocity:
+    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
   y: 230,
-  yVelocity: 3,
-  //yVelocity: (Math.round(Math.random() * 2) + 1) * Math.random() > 0.5 ? 1 : -1,
+  yVelocity:
+    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
 };
 
 const paddle = {
@@ -123,6 +123,24 @@ function drawPaddle(paddle) {
 scene.addEventListener("mousemove", movePaddle);
 function movePaddle(e) {
   paddle.y = e.offsetY;
+}
+
+function wasGoalScored() {
+  /* TODO: change pseudo code to real code
+  if ball touch left side 
+    then addPlayerScore("AI")
+  else if ball touch right side
+    then addPlayerScore("Player")*/
+}
+
+function addPlayerScore(player) {
+  if (player == "Player") {
+    playerScore += 1;
+    console.log("playerScore = " + playerScore);
+  } else if (player == "AI") {
+    AIScore += 1;
+    console.log("AIScore = " + AIScore);
+  }
 }
 
 init(); // Start the game
