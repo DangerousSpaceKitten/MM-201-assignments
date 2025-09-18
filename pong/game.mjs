@@ -74,6 +74,7 @@ function update() {
   keepBallOnPitch(ball);
   bounceOnPlayerPaddle(ball);
   bounceOnAIPaddle(ball);
+  moveAIPaddle();
   wasGoalScored(ball);
   draw();
 }
@@ -139,6 +140,22 @@ function bounceOnPlayerPaddle(ball) {
   }
 }
 
+function moveAIPaddle() {
+  const paddleCenter = AIPaddle.y + AIPaddle.height / 2;
+  const maxSpeed = 2;
+  const reactionOffset = Math.random() * 30 - 15;
+
+  if (ball.y + reactionOffset < paddleCenter - 10) {
+    AIPaddle.y -= maxSpeed;
+  } else if (ball.y + reactionOffset > paddleCenter + 10) {
+    AIPaddle.y += maxSpeed;
+  }
+
+  if (AIPaddle.y < BORDER.TOP) AIPaddle.y = BORDER.TOP;
+  if (AIPaddle.y + AIPaddle.height > BORDER.BOTTOM)
+    AIPaddle.y = BORDER.BOTTOM - AIPaddle.height;
+}
+
 function bounceOnAIPaddle(ball) {
   if (
     isInBounds(ball.x, AIPaddle.x - ball.radius, AIPaddle.x + AIPaddle.width) &&
@@ -160,7 +177,6 @@ function drawPaddle(paddle) {
 scene.addEventListener("mousemove", movePlayerPaddle);
 function movePlayerPaddle(e) {
   playerPaddle.y = e.offsetY;
-  AIPaddle.y = e.offsetY; // this will be removed once the AI can move on its own
 }
 
 function wasGoalScored() {
@@ -183,7 +199,7 @@ function addPlayerScore(player) {
   }
 }
 
-// TODO add AI movement
+// TODO add Score on screen
 
 init(); // Start the game
 
