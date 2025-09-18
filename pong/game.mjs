@@ -27,11 +27,19 @@ const ball = {
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
 };
 
-const paddle = {
+const playerPaddle = {
   color: "Red",
   width: 20,
   height: 75,
   x: 10,
+  y: 200,
+};
+
+const AIPaddle = {
+  color: "Red",
+  width: 20,
+  height: 75,
+  x: 610,
   y: 200,
 };
 
@@ -64,7 +72,9 @@ function update() {
   // Update to game logic.
   moveBall(ball);
   keepBallOnPitch(ball);
-  bounceOnPaddle(ball);
+  bounceOnPlayerPaddle(ball);
+  bounceOnAIPaddle(ball);
+  wasGoalScored(ball);
   draw();
 }
 
@@ -74,7 +84,8 @@ function draw() {
   drawPaddle(background);
   drawPaddle(middleLine);
   drawBall(ball);
-  drawPaddle(paddle);
+  drawPaddle(playerPaddle);
+  drawPaddle(AIPaddle);
 }
 
 function keepBallOnPitch(ball) {
@@ -98,21 +109,43 @@ function moveBall(ball) {
   ball.y = ball.y + ball.yVelocity;
 }
 
-function bounceOnPaddle(ball) {
+function drawBall(ball) {
+  fillCircle(ball);
+}
+
+function resetBall(ball) {
+  ball.x = 310;
+  ball.y = 230;
+}
+
+function bounceOnPlayerPaddle(ball) {
   if (
     isInBounds(
       ball.x,
-      paddle.x + paddle.width,
-      paddle.x + paddle.width + ball.radius
+      playerPaddle.x + playerPaddle.width,
+      playerPaddle.x + playerPaddle.width + ball.radius
     ) &&
-    isInBounds(ball.y, paddle.y - ball.radius, paddle.y + paddle.height)
+    isInBounds(
+      ball.y,
+      playerPaddle.y - ball.radius,
+      playerPaddle.y + playerPaddle.height + ball.radius
+    )
   ) {
     ball.xVelocity = ball.xVelocity * -1;
   }
 }
 
-function drawBall(ball) {
-  fillCircle(ball);
+function bounceOnAIPaddle(ball) {
+  if (
+    isInBounds(ball.x, AIPaddle.x - ball.radius, AIPaddle.x + AIPaddle.width) &&
+    isInBounds(
+      ball.y,
+      AIPaddle.y - ball.radius,
+      AIPaddle.y + AIPaddle.height + ball.radius
+    )
+  ) {
+    ball.xVelocity = ball.xVelocity * -1;
+  }
 }
 
 function drawPaddle(paddle) {
@@ -120,17 +153,20 @@ function drawPaddle(paddle) {
   brush.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
-scene.addEventListener("mousemove", movePaddle);
-function movePaddle(e) {
-  paddle.y = e.offsetY;
+scene.addEventListener("mousemove", movePlayerPaddle);
+function movePlayerPaddle(e) {
+  playerPaddle.y = e.offsetY;
+  AIPaddle.y = e.offsetY; // this will be removed once the AI can move on its own
 }
 
 function wasGoalScored() {
-  /* TODO: change pseudo code to real code
-  if ball touch left side 
-    then addPlayerScore("AI")
-  else if ball touch right side
-    then addPlayerScore("Player")*/
+  if (ball.x + ball.radius >= BORDER.RIGHT) {
+    addPlayerScore("Player");
+    resetBall(ball);
+  } else if (ball.x - ball.radius <= BORDER.LEFT) {
+    addPlayerScore("AI");
+    resetBall(ball);
+  }
 }
 
 function addPlayerScore(player) {
@@ -142,6 +178,8 @@ function addPlayerScore(player) {
     console.log("AIScore = " + AIScore);
   }
 }
+
+// TODO add AI movement
 
 init(); // Start the game
 
