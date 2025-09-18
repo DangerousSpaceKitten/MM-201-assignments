@@ -23,8 +23,8 @@ const ball = {
   xVelocity:
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
   y: 230,
-  yVelocity:
-    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
+  yVelocity: 0,
+  //(Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
 };
 
 const playerPaddle = {
@@ -70,10 +70,10 @@ function init() {
 
 function update() {
   // Update to game logic.
-  moveBall(ball);
   keepBallOnPitch(ball);
   bounceOnPlayerPaddle(ball);
   bounceOnAIPaddle(ball);
+  moveBall(ball);
   moveAIPaddle();
   wasGoalScored(ball);
   draw();
@@ -87,6 +87,7 @@ function draw() {
   drawBall(ball);
   drawPaddle(playerPaddle);
   drawPaddle(AIPaddle);
+  drawScores();
 }
 
 function keepBallOnPitch(ball) {
@@ -136,13 +137,14 @@ function bounceOnPlayerPaddle(ball) {
       playerPaddle.y + playerPaddle.height + ball.radius
     )
   ) {
-    ball.xVelocity = ball.xVelocity * -1;
+    ball.xVelocity = ball.xVelocity * -1.1;
+    ball.yVelocity = ball.yVelocity * 1.1;
   }
 }
 
 function moveAIPaddle() {
   const paddleCenter = AIPaddle.y + AIPaddle.height / 2;
-  const maxSpeed = 2;
+  const maxSpeed = 4;
   const reactionOffset = Math.random() * 30 - 15;
 
   if (ball.y + reactionOffset < paddleCenter - 10) {
@@ -165,7 +167,8 @@ function bounceOnAIPaddle(ball) {
       AIPaddle.y + AIPaddle.height + ball.radius
     )
   ) {
-    ball.xVelocity = ball.xVelocity * -1;
+    ball.xVelocity = ball.xVelocity * -1.1;
+    ball.yVelocity = ball.yVelocity * 1.1;
   }
 }
 
@@ -199,7 +202,17 @@ function addPlayerScore(player) {
   }
 }
 
-// TODO add Score on screen
+function drawScores() {
+  brush.fillStyle = "white";
+  brush.font = "24px Arial";
+  brush.textAlign = "center";
+
+  // Player score (left side)
+  brush.fillText(playerScore, scene.width / 2 - 20, 40);
+
+  // AI score (right side)
+  brush.fillText(AIScore, scene.width / 2 + 20, 40);
+}
 
 init(); // Start the game
 
