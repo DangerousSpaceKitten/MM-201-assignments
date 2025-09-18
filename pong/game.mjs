@@ -115,7 +115,11 @@ function drawBall(ball) {
 
 function resetBall(ball) {
   ball.x = 310;
+  ball.xVelocity =
+    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1);
   ball.y = 230;
+  ball.yVelocity =
+    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1);
 }
 
 function bounceOnPlayerPaddle(ball) {
