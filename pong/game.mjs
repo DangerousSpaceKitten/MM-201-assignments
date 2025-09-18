@@ -23,8 +23,8 @@ const ball = {
   xVelocity:
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
   y: 230,
-  yVelocity: 0,
-  //(Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
+  yVelocity:
+    (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1),
 };
 
 const playerPaddle = {
@@ -62,14 +62,12 @@ const middleLine = {
 // Game engine ----------------------------------------------------------------
 
 function init() {
-  // Do any initialization that is needed before the game starts.
   playerScore = 0;
   AIScore = 0;
   interval = setInterval(update, FPS);
 }
 
 function update() {
-  // Update to game logic.
   keepBallOnPitch(ball);
   bounceOnPlayerPaddle(ball);
   bounceOnAIPaddle(ball);
@@ -81,7 +79,6 @@ function update() {
 
 function draw() {
   clearScreen();
-  // Draw the current game state.
   drawPaddle(background);
   drawPaddle(middleLine);
   drawBall(ball);
@@ -195,10 +192,8 @@ function wasGoalScored() {
 function addPlayerScore(player) {
   if (player == "Player") {
     playerScore += 1;
-    console.log("playerScore = " + playerScore);
   } else if (player == "AI") {
     AIScore += 1;
-    console.log("AIScore = " + AIScore);
   }
 }
 
@@ -207,10 +202,8 @@ function drawScores() {
   brush.font = "24px Arial";
   brush.textAlign = "center";
 
-  // Player score (left side)
   brush.fillText(playerScore, scene.width / 2 - 20, 40);
 
-  // AI score (right side)
   brush.fillText(AIScore, scene.width / 2 + 20, 40);
 }
 
