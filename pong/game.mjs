@@ -73,7 +73,6 @@ function update() {
   bounceOnAIPaddle(ball);
   moveBall(ball);
   moveAIPaddle();
-  wasGoalScored(ball);
   draw();
 }
 
@@ -89,10 +88,23 @@ function draw() {
 
 function keepBallOnPitch(ball) {
   if (
-    isInBounds(ball.x, BORDER.LEFT + ball.radius, BORDER.RIGHT - ball.radius) ==
-    false
+    isInBounds(
+      ball.x,
+      BORDER.LEFT + ball.radius,
+      BORDER.LEFT + ball.radius + playerPaddle.x
+    )
   ) {
-    ball.xVelocity = ball.xVelocity * -1;
+    AIScore++;
+    resetBall(ball);
+  } else if (
+    isInBounds(
+      ball.x,
+      BORDER.RIGHT - ball.radius - 10,
+      BORDER.RIGHT - ball.radius
+    )
+  ) {
+    playerScore++;
+    resetBall(ball);
   }
 
   if (
@@ -113,10 +125,10 @@ function drawBall(ball) {
 }
 
 function resetBall(ball) {
-  ball.x = 310;
+  ball.x = BORDER.RIGHT / 2 - ball.radius;
   ball.xVelocity =
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1);
-  ball.y = 230;
+  ball.y = BORDER.BOTTOM / 2 - ball.radius;
   ball.yVelocity =
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1);
 }
@@ -134,8 +146,10 @@ function bounceOnPlayerPaddle(ball) {
       playerPaddle.y + playerPaddle.height + ball.radius
     )
   ) {
-    ball.xVelocity = ball.xVelocity * -1.1;
-    ball.yVelocity = ball.yVelocity * 1.1;
+    if (ball.xVelocity < 10 && ball.yVelocity < 10) {
+      ball.xVelocity = ball.xVelocity * -1.1;
+      ball.yVelocity = ball.yVelocity * 1.1;
+    }
   }
 }
 
@@ -164,8 +178,10 @@ function bounceOnAIPaddle(ball) {
       AIPaddle.y + AIPaddle.height + ball.radius
     )
   ) {
-    ball.xVelocity = ball.xVelocity * -1.1;
-    ball.yVelocity = ball.yVelocity * 1.1;
+    if (ball.xVelocity < 10 && ball.yVelocity < 10) {
+      ball.xVelocity = ball.xVelocity * -1.1;
+      ball.yVelocity = ball.yVelocity * 1.1;
+    }
   }
 }
 
@@ -179,27 +195,9 @@ function movePlayerPaddle(e) {
   playerPaddle.y = e.offsetY;
 }
 
-function wasGoalScored() {
-  if (ball.x + ball.radius >= BORDER.RIGHT) {
-    addPlayerScore("Player");
-    resetBall(ball);
-  } else if (ball.x - ball.radius <= BORDER.LEFT) {
-    addPlayerScore("AI");
-    resetBall(ball);
-  }
-}
-
-function addPlayerScore(player) {
-  if (player == "Player") {
-    playerScore += 1;
-  } else if (player == "AI") {
-    AIScore += 1;
-  }
-}
-
 function drawScores() {
   brush.fillStyle = "white";
-  brush.font = "24px Arial";
+  brush.font = "24px Copperplate";
   brush.textAlign = "center";
 
   brush.fillText(playerScore, scene.width / 2 - 20, 40);
