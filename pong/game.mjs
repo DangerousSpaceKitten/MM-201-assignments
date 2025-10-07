@@ -71,6 +71,7 @@ function update() {
   keepBallOnPitch(ball);
   bounceOnPlayerPaddle(ball);
   bounceOnAIPaddle(ball);
+  checkBallPosition(ball);
   moveBall(ball);
   moveAIPaddle();
   draw();
@@ -131,6 +132,18 @@ function resetBall(ball) {
   ball.y = BORDER.BOTTOM / 2 - ball.radius;
   ball.yVelocity =
     (Math.round(Math.random() * 4) + 2) * (Math.random() > 0.5 ? 1 : -1);
+}
+
+function checkBallPosition(ball) {
+  if (ball.x < BORDER.LEFT) {
+    ball.x = ball.x * -1 + 30;
+  } else if (ball.x > BORDER.RIGHT) {
+    ball.x = ball.x - (ball.x % 610);
+  } else if (ball.y < BORDER.TOP) {
+    ball.y = ball.y * -1;
+  } else if (ball.y > BORDER.BOTTOM) {
+    ball.y = ball.y - (ball.y % 480);
+  }
 }
 
 function bounceOnPlayerPaddle(ball) {
