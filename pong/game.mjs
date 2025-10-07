@@ -9,6 +9,13 @@ let interval;
 let playerScore = 0;
 let AIScore = 0;
 
+const maxDurationInSeconds = 90;
+const startTime = Date.now();
+let currentTime = Date.now();
+let isGameOver = false;
+
+let maxAISpeed = 4;
+
 const BORDER = {
   LEFT: 0,
   TOP: 0,
@@ -64,10 +71,12 @@ const middleLine = {
 function init() {
   playerScore = 0;
   AIScore = 0;
+  isGameOver = false;
   interval = setInterval(update, FPS);
 }
 
 function update() {
+  updateCurrentTime();
   keepBallOnPitch(ball);
   bounceOnPlayerPaddle(ball);
   bounceOnAIPaddle(ball);
@@ -75,16 +84,23 @@ function update() {
   moveBall(ball);
   moveAIPaddle();
   draw();
+  endGame(startTime);
 }
 
 function draw() {
-  clearScreen();
-  drawPaddle(background);
-  drawPaddle(middleLine);
-  drawBall(ball);
-  drawPaddle(playerPaddle);
-  drawPaddle(AIPaddle);
-  drawScores();
+  if (isGameOver === false) {
+    clearScreen();
+    drawPaddle(background);
+    drawPaddle(middleLine);
+    drawBall(ball);
+    drawPaddle(playerPaddle);
+    drawPaddle(AIPaddle);
+    drawScores();
+    drawTimer(currentTime);
+  } else {
+    clearScreen();
+    drawPaddle(background);
+  }
 }
 
 function keepBallOnPitch(ball) {
@@ -161,20 +177,21 @@ function bounceOnPlayerPaddle(ball) {
   ) {
     if (ball.xVelocity < 10 && ball.yVelocity < 10) {
       ball.xVelocity = ball.xVelocity * -1.1;
-      ball.yVelocity = ball.yVelocity * 1.1;
+      let collisionPoint = ball.y - playerPaddle.y;
+      ball.yVelocity =
+        ball.yVelocity * (0.5 + Math.abs(20 - collisionPoint) / 20);
     }
   }
 }
 
 function moveAIPaddle() {
   const paddleCenter = AIPaddle.y + AIPaddle.height / 2;
-  const maxSpeed = 4;
   const reactionOffset = Math.random() * 30 - 15;
 
   if (ball.y + reactionOffset < paddleCenter - 10) {
-    AIPaddle.y -= maxSpeed;
+    AIPaddle.y -= maxAISpeed;
   } else if (ball.y + reactionOffset > paddleCenter + 10) {
-    AIPaddle.y += maxSpeed;
+    AIPaddle.y += maxAISpeed;
   }
 
   if (AIPaddle.y < BORDER.TOP) AIPaddle.y = BORDER.TOP;
@@ -193,7 +210,9 @@ function bounceOnAIPaddle(ball) {
   ) {
     if (ball.xVelocity < 10 && ball.yVelocity < 10) {
       ball.xVelocity = ball.xVelocity * -1.1;
-      ball.yVelocity = ball.yVelocity * 1.1;
+      let collisionPoint = ball.y - AIPaddle.y;
+      ball.yVelocity =
+        ball.yVelocity * (0.5 + Math.abs(20 - collisionPoint) / 20);
     }
   }
 }
@@ -208,6 +227,24 @@ function movePlayerPaddle(e) {
   playerPaddle.y = e.offsetY;
 }
 
+window.addEventListener("keydown", activateCheat);
+function activateCheat(e) {
+  let key = e.key;
+  if (key == "l") {
+    maxAISpeed = 0;
+    setTimeout(resetAISpeed, 2000);
+    function resetAISpeed() {
+      maxAISpeed = 4;
+    }
+  } else if (key == "c") {
+    playerPaddle.y = ball.y - playerPaddle.height / 2;
+  } else if (key == "+") {
+    ball.radius += 2.5;
+  } else if (key == "-" && ball.radius >= 5) {
+    ball.radius -= 2.5;
+  }
+}
+
 function drawScores() {
   brush.fillStyle = "white";
   brush.font = "24px Copperplate";
@@ -216,6 +253,26 @@ function drawScores() {
   brush.fillText(playerScore, scene.width / 2 - 20, 40);
 
   brush.fillText(AIScore, scene.width / 2 + 20, 40);
+}
+
+function updateCurrentTime() {
+  currentTime = Date.now();
+}
+
+function drawTimer(currentTime) {
+  let countdown =
+    maxDurationInSeconds - Math.ceil((currentTime - startTime) / 1000);
+  brush.fillText(
+    "Time: " + countdown + "s",
+    BORDER.RIGHT - 100,
+    BORDER.TOP + 50
+  );
+}
+
+function endGame(startTime) {
+  if (currentTime >= startTime + maxDurationInSeconds * 1000) {
+    isGameOver = true;
+  }
 }
 
 init(); // Start the game
