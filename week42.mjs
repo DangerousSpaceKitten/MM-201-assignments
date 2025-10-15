@@ -196,6 +196,7 @@ function wordsFromText(text) {
   console.log("Index of longest word: " + indexOfLongestWord);
 }
 
-//wordsFromText(
-//  "Lorem ipsum dolor sit amet consectetur adipiscing elit Morbi suscipit pharetra justo vel tincidunt"
-//);
+/*wordsFromText(
+   "Lorem ipsum dolor sit amet consectetur adipiscing elit Morbi suscipit pharetra justo vel tincidunt"
+ );
+ */
